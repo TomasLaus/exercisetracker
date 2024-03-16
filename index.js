@@ -25,6 +25,20 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+// POST /api/users to Create a New User
+
+app.post('/api/users', express.urlencoded({ extended: false }), async (req, res) => {
+  const { username } = req.body;
+  const user = new User({ username });
+
+  try {
+    const savedUser = await user.save();
+    res.json({ username: savedUser.username, _id: savedUser._id });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Error saving the user');
+  }
+});
 
 
 const listener = app.listen(process.env.PORT || 3000, () => {
