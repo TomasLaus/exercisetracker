@@ -52,6 +52,39 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
+// POST /api/users/:_id/exercises to Add an Exercise
+
+app.post('/api/users/:_id/exercises', express.urlencoded({ extended: false }), async (req, res) => {
+  const { _id } = req.params;
+  let { description, duration, date } = req.body;
+  date = date ? new Date(date) : new Date();
+
+  try {
+    const user = await User.findById(_id);
+    if (!user) {
+      return res.status(400).send('Unknown user');
+    }
+
+    const exercise = new Exercise({
+      user: _id,
+      description,
+      duration: parseInt(duration, 10),
+      date,
+    });
+
+    const savedExercise = await exercise.save();
+    res.json({
+      _id: user._id,
+      username: user.username,
+      date: savedExercise.date.toDateString(),
+      duration: savedExercise.duration,
+      description: savedExercise.description,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Error saving exercise');
+  }
+});
 
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port);
