@@ -40,6 +40,18 @@ app.post('/api/users', express.urlencoded({ extended: false }), async (req, res)
   }
 });
 
+// GET /api/users to List All Users
+
+app.get('/api/users', async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.json(users);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Error retrieving users');
+  }
+});
+
 
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port);
