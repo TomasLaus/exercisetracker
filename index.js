@@ -86,6 +86,40 @@ app.post('/api/users/:_id/exercises', express.urlencoded({ extended: false }), a
   }
 });
 
+// GET /api/users/:_id/logs to Get a User's Exercise Log
+
+app.get('/api/users/:_id/logs', async (req, res) => {
+  const { _id } = req.params;
+  let { from, to, limit } = req.query;
+
+  try {
+    const user = await User.findById(_id);
+    if (!user) return res.status(400).send('Unknown user');
+
+    let query = Exercise.find({ user: user._id });
+
+    if (from) query = query.where('date').gte(new Date(from));
+    if (to) query = query.where('date').lte(new Date(to));
+    if (limit) query = query.limit(Number(limit));
+
+    const exercises = await query.exec();
+
+    res.json({
+      _id: user._id,
+      username: user.username,
+      count: exercises.length,
+      log: exercises.map((ex) => ({
+        description: ex.description,
+        duration: ex.duration,
+        date: ex.date.toDateString(),
+      })),
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+});
+
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port);
 });
