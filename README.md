@@ -2,6 +2,9 @@
 
 A RESTful API to keep track of your exercises, built with Node.js, Express, and MongoDB. This project is part of the freeCodeCamp back-end development certification.
 
+### [Exercise Tracker - Live Demo](https://exercisetracker-asns.onrender.com/)
+*you may have to wait about 30-50 seconds if the page does not load (due to the hosting service).
+
 ## Features
 
 - Create new users and manage them.
